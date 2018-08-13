@@ -7,7 +7,7 @@ output: html_document
 
 # Daily Challenge 1 - August 3, 2018
 
-I want to create a daily challenge so I looked towards the reddit page "Daily Programming Challenges" and I wanted to start with something small. 
+I want to participate in something like a daily challenge so I looked towards the reddit page "Daily Programming Challenges" and I wanted to start with something small. 
 
 https://www.reddit.com/r/dailyprogrammer/comments/8q96da/20180611_challenge_363_easy_i_before_e_except/
 
@@ -21,127 +21,67 @@ They are:
  "not a c"    +  "ie"
  "c"          +  "ei" 
  
-
-check <- function (string){
-if (str_detect(string,"ei")){
-  if(str_detect(string, "cei")){
-    result <- TRUE
-  } else {
-    result <- FALSE
-  }
-  } else if (str_detect (string, "ie")){
-  if(str_detect(string, "cie")){
-    result <- FALSE
-  } else {
-    result <- TRUE
-  }
-} else {
-  result <- TRUE
-}
-  return(result)
-}
 ```{r}
-  string <- "ceiling"
-obeys_rule <- FALSE
-  pos = unlist(gregexpr('ei', string)) # Returns positions of every match in a string
-  #  pos = -1 means that there's no match
-  if (pos != -1L){ # if there is a 'ei' match
-    if (string[pos-1] == "c"){
-      obeys_rule <- TRUE
-      break
+
+spelling_check <- function(string){
+  obeys_rule <- TRUE
+  # If "ei" is a match, then it must immediately follow a "c"
+  # Returns positions of every match in a string
+  # Pos = -1 means that there's no match
+  pos = unlist(gregexpr('ei', string)) 
+
+  # If there's a match "ei"
+  if (pos != -1L){ 
+      if (substring(string,pos-1, pos-1) != "c" | pos == 1){
+      obeys_rule <- FALSE
+      return (obeys_rule)
+      }
+    } 
+
+  # If "ie" is a match, then it must not immediately follow a "c"
+  if(obeys_rule){
+    pos = unlist(gregexpr('ie', string)) 
+    if (pos != -1L){ #it has ie match
+      if(substring(string,pos-1, pos-1) == "c" ){
+        obeys_rule <- FALSE
+        return (obeys_rule)
+      }
     }
-  }  
-obeys_rule
+  }
+  return (obeys_rule)
+}
 
 
 #*******************************************************************************************
-
-
-
-
-library(stringr)
-check_IbeforeE <- function (string){
-  # if the word doesn't include 'ei' or 'ie' then it automatically follows the rule
-  obeys_rule <- TRUE
-  
-  
-  # if 'ei' appears, it must immediately follow 'c'  
-  string <- "ceiling"
-  pos = unlist(gregexpr('ei', string)) # Returns positions of every match in a string
-  #  pos = -1 means that there's no match
-  if (pos != -1L){ # if there is a 'ei' match
-    if (string[pos-1] == "c"){
-      obeys_rule <- TRUE
-    }
-  }  
-
-  
-  
-
-
-  if (str_locate(string, "ei")){
-     index <- as.vector(str_locate(string, "ei"))
-     if (index[1]-1 != "c"){
-       obeys_rule <- FALSE
-       break
-     }
-  }
-  
-  
-  # if 'ie' appears in a word, it must not immediately follow c
-  return (obeys_rule)
-}
-string <- "ceiling"
-index <- as.vector(str_locate(string, "ei")) 
-string [index-1]
-
-string <- "ceiling"
-index <- as.vector(str_locate(string, "ei"))
-if(is.na(index[1])){
-  if(string[index[1]-1] !== "c"){
-    obeys_rule <- FALSE
-    break
-  }
-}
-index[1]-1
-string[index[1]-1]
- if (str_locate(string, "ei") != NA){
-     if (index[1]-1 != "c"){
-       obeys_rule <- FALSE
-       break
-     }
-  }
-
 # Checking that our code works with a demo list of terms
-check("fiery")
-check("hierarchy")
-check("hieroglyphic")
-check("ceiling")
-check("inconceivable")
-check("receipt")
-check("daily")
-check("programmer")
-check("one")
-check("two")
-check("three")
-check("sleigh")
-check("stein")
-check("fahrenheit")
-check("deifies")
-check("nuclei")
-check("either")
-check("reimburse")
-check("ancient")
-check("juicier")
-check("societies")
-check("a")
-check("zombie")
-check("transceiver")
-check("veil")
-check("icier")
+spelling_check("fiery")
+spelling_check("hierarchy")
+spelling_check("hieroglyphic")
+spelling_check("ceiling")
+spelling_check("inconceivable")
+spelling_check("receipt")
+spelling_check("daily")
+spelling_check("programmer")
+spelling_check("one")
+spelling_check("two")
+spelling_check("three")
+spelling_check("sleigh")
+spelling_check("stein")
+spelling_check("fahrenheit")
+spelling_check("deifies")
+spelling_check("nuclei")
+spelling_check("either")
+spelling_check("reimburse")
+spelling_check("ancient")
+spelling_check("juicier")
+spelling_check("a")
+spelling_check("zombie")
+spelling_check("transceiver")
+spelling_check("veil")
+spelling_check("icier")
  
 # Testing our function on a bigger list of terms
-text_list <- read.table("https://norvig.com/ngrams/enable1.txt", header = FALSE)
+text_list <- read.table("https://norvig.com/ngrams/enable1.txt", header = FALSE,stringsAsFactors = FALSE)
 str(text_list)
 #text_list$value <- NA
 names(text_list) <- c("term")
@@ -150,15 +90,11 @@ counts <- 0L # keeps track of how many true values there are
 
 length(text_list$term)
 for(i in 1 : length(text_list$term)){
-  if (check(text_list$term[i])){
+  if (spelling_check(text_list$term[i])){
   counts <- counts + 1
 }
 }
-#for(i in 1 : length(text_list$term))
-if (check(text_list$term[2])){
-  counts <- counts + 1
-}
-counts
+counts 
 
 ```
 
